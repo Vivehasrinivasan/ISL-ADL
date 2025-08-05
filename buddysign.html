@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuddySign - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #c4f4c4;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #73c673;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .sidebar h2 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      font-size: 20px;
+      margin: 15px 0;
+      color: white;
+      text-decoration: none;
+    }
+
+    .main {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .progress-cards {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background-color: #fff8dc;
+      padding: 20px;
+      margin: 10px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 180px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .pet-section {
+      text-align: center;
+      background-color: #e6ffe6;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .pet-section img {
+      width: 150px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      width: 80%;
+      background-color: #ddd;
+      border-radius: 12px;
+      margin: 0 auto;
+      height: 20px;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      width: 40%;
+      background-color: #4caf50;
+      border-radius: 12px;
+    }
+
+    .pet-message {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>BuddySign</h2>
+    <a href="#">Dashboard</a>
+    <a href="#">Lessons</a>
+    <a href="#">Dictionary</a>
+    <a href="#">Forum</a>
+    <a href="#">Settings</a>
+  </div>
+
+  <div class="main">
+    <!-- Progress Section Above the Pet -->
+    <div class="progress-cards">
+      <div class="card">
+        <h3>⭐ Points</h3>
+        <p>1250</p>
+      </div>
+      <div class="card">
+        <h3>🔥 Streak</h3>
+        <p>5 days</p>
+      </div>
+      <div class="card">
+        <h3>📚 Lessons Completed</h3>
+        <p>3 / 10</p>
+      </div>
+    </div>
+
+    <!-- Pet Section -->
+    <div class="pet-section">
+      <img src="pet.png" alt="Your Pet" />
+      <div class="progress-bar">
+        <div class="progress-bar-inner"></div>
+      </div>
+      <div class="pet-message">I'm hungry 😋! Complete lessons to help me grow!</div>
+    </div>
+  </div>
+</body>
+</html>
+
