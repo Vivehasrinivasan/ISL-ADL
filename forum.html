@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuddySign Kids Forum</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      position: relative;
+      max-width: 400px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 20px 20px 20px 70px; /* leave space on left for menu toggle */
+      overflow-x: hidden;
+    }
+
+    /* Menu toggle button on left side */
+    .menu-toggle {
+      position: absolute;
+      top: 20px;
+      left: 15px;
+      width: 40px;
+      height: 40px;
+      background-color: #4caf50;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      user-select: none;
+    }
+
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      color: #333;
+    }
+
+    /* Sidebar menu inside container */
+    .menu {
+      position: absolute;
+      top: 60px; /* below toggle button */
+      left: -180px; /* hidden to left */
+      width: 160px;
+      height: calc(100% - 60px);
+      background: white;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+      flex-direction: column;
+      padding-top: 10px;
+      transition: left 0.3s ease;
+      border-radius: 10px;
+      display: flex;
+      z-index: 15;
+    }
+
+    .menu.active {
+      left: 0; /* slide in inside container */
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #333;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .new-post input,
+    .new-post textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    .new-post button {
+      width: 100%;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .forum-post {
+      background-color: #fff8dc;
+      padding: 15px;
+      border-radius: 15px;
+      border: 2px solid #333;
+      margin-bottom: 20px;
+    }
+
+    .forum-post h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .forum-post p {
+      font-size: 14px;
+    }
+
+    .reactions {
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .reply {
+      margin-top: 10px;
+      background-color: #e6ffe6;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: white;
+      background: transparent;
+      position: sticky;
+      bottom: 0;
+      margin-top: 20px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">☰</button>
+
+    <div class="menu" id="menu">
+      <a href="#">Dashboard</a>
+      <a href="#">Lessons</a>
+      <a href="#">Dictionary</a>
+      <a href="#">Forum</a>
+      <a href="#">Settings</a>
+    </div>
+
+    <div class="header">
+      <h1> Forum</h1>
+    </div>
+
+    <div class="new-post">
+      <input type="text" placeholder="📝 Title your post..." />
+      <textarea rows="3" placeholder="💬 How are you feeling or what do you want to ask?"></textarea>
+      <button>📤 Post</button>
+    </div>
+
+    <div class="forum-post">
+      <h3>😃 I'm feeling happy today!</h3>
+      <p>I finished my first ISL lesson and got 3 stars ⭐⭐⭐</p>
+      <div class="reactions">
+        ❤️ 3 &nbsp; 😄 2 &nbsp; 🙌 1
+      </div>
+      <div class="reply">
+        <strong>👧 User 2:</strong> Yay! I finished mine too!
+      </div>
+    </div>
+
+    <div class="forum-post">
+      <h3>❓ How do I sign "cat"?</h3>
+      <p>I want to show my pet to my friend but don’t know the ISL sign for cat. Help!</p>
+      <div class="reactions">
+        💡 4 &nbsp; 🐱 1 &nbsp; ❤️ 1
+      </div>
+      <div class="reply">
+        <strong>👦 User 1:</strong> It's in Lesson 2! Look under "Animals" 🐱
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    🧩 BuddySign &copy; 2025 | Safe Learning for Awesome Kids!
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.classList.toggle("active");
+    }
+  </script>
+
+</body>
+</html>
+
+
+
+
+
