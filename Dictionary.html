@@ -1,0 +1,740 @@
+Html: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuddySign Dictionary</title>
+    
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <!-- Sidebar Menu -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">BuddySign</div>
+            <a href="#">Dashboard</a>
+            <a href="#">Lessons</a>
+            <a href="#" class="active">Dictionary</a>
+            <a href="#">Forum</a>
+            <a href="#">Settings</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            
+            <div class="header">
+                <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+                <h1>Dictionary</h1>
+                <div class="search-container">
+                    <input type="text" class="search-bar" placeholder="Search for a word..." id="searchInput">
+                    <div class="search-icon">🔍</div>
+                </div>
+            </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('words')">Words</button>
+            <button class="tab-button" onclick="switchTab('alphabet')">Alphabet</button>
+        </div>
+
+        <div class="content">
+            <div id="words-tab" class="tab-content active">
+                <div id="words-container">
+                    <!-- Words will be loaded here -->
+                </div>
+            </div>
+
+            <div id="alphabet-tab" class="tab-content">
+                <div class="alphabet-grid">
+                    <button class="letter-button" onclick="filterByLetter('A')">A</button>
+                    <button class="letter-button" onclick="filterByLetter('B')">B</button>
+                    <button class="letter-button" onclick="filterByLetter('C')">C</button>
+                    <button class="letter-button" onclick="filterByLetter('D')">D</button>
+                    <button class="letter-button" onclick="filterByLetter('E')">E</button>
+                    <button class="letter-button" onclick="filterByLetter('F')">F</button>
+                    <button class="letter-button" onclick="filterByLetter('G')">G</button>
+                    <button class="letter-button" onclick="filterByLetter('H')">H</button>
+                    <button class="letter-button" onclick="filterByLetter('I')">I</button>
+                    <button class="letter-button" onclick="filterByLetter('J')">J</button>
+                    <button class="letter-button" onclick="filterByLetter('K')">K</button>
+                    <button class="letter-button" onclick="filterByLetter('L')">L</button>
+                    <button class="letter-button" onclick="filterByLetter('M')">M</button>
+                    <button class="letter-button" onclick="filterByLetter('N')">N</button>
+                    <button class="letter-button" onclick="filterByLetter('O')">O</button>
+                    <button class="letter-button" onclick="filterByLetter('P')">P</button>
+                    <button class="letter-button" onclick="filterByLetter('Q')">Q</button>
+                    <button class="letter-button" onclick="filterByLetter('R')">R</button>
+                    <button class="letter-button" onclick="filterByLetter('S')">S</button>
+                    <button class="letter-button" onclick="filterByLetter('T')">T</button>
+                    <button class="letter-button" onclick="filterByLetter('U')">U</button>
+                    <button class="letter-button" onclick="filterByLetter('V')">V</button>
+                    <button class="letter-button" onclick="filterByLetter('W')">W</button>
+                    <button class="letter-button" onclick="filterByLetter('X')">X</button>
+                    <button class="letter-button" onclick="filterByLetter('Y')">Y</button>
+                    <button class="letter-button" onclick="filterByLetter('Z')">Z</button>
+                </div>
+                <div id="alphabet-container">
+                    <div class="no-results">Select a letter to see words starting with that letter.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>
+* {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e6ffe6 0%, #d4f5d4 100%);
+            min-height: 100vh;
+            min-width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 40px auto 20px auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            overflow: hidden;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            min-height: 650px;
+            position: relative;
+        }
+      .header {
+    position: relative;
+    padding-top: 60px; /* push content down so menu button has space */
+    text-align: center;
+         background:white ;
+            padding-bottom: 25px;
+}
+
+        /* Sidebar styles */
+        .sidebar {
+            position: absolute;
+            top: 0; left: -160px;
+            width: 160px;
+            height: 100%;
+            background-color: #73c673;
+            color: white;
+            padding-top: 60px;
+            transition: left 0.3s cubic-bezier(.44,.04,.54,1.01);
+            z-index: 2;
+            box-shadow: 2px 0 16px 0 rgba(80,130,100,0.07);
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar .logo {
+            font-size: 1.22rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 23px;
+            letter-spacing: 1px;
+            margin-left: 16px;
+        }
+        .sidebar a {
+            display: block;
+            width: 100%;
+            color: white;
+            text-decoration: none;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            border-radius: 0;
+            margin: 0;
+        }
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #5aa85a;
+            color: #fff;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            min-height: 650px;
+            width: 100%;
+            transition: margin-left 0.3s;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        .container.shifted .main-content {
+            margin-left: 160px;
+        }
+        .menu-btn {
+            position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 3;
+    background-color: #73c673;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+        }
+
+        .header h1 {
+            font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: black;
+    letter-spacing: 1px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-bar {
+            width: 90%;
+            padding: 12px 50px 12px 16px;
+            border: 1px solid #b9c48a;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+            outline: none;
+            transition: all 0.16s ease;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .search-bar:focus {
+            border-color: #44a060;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #73c673;
+            font-size: 18px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e3e3e3;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.16s ease;
+            position: relative;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .tab-button.active {
+            color: #348c2a;
+            background: rgba(115, 198, 115, 0.1);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #73c673;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .content {
+            height: calc(100% - 200px);
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 15px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .letter-button {
+            padding: 12px;
+            background: #73c673;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 16px rgba(115, 198, 115, 0.3);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .letter-button:hover {
+            background: #56bb70;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(115, 198, 115, 0.4);
+        }
+
+        .definition-card {
+            border-radius: 12px;
+            border: 1px solid #e3e3e3;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+            background: #fff8dc;
+            margin-bottom: 15px;
+            padding: 16px 15px;
+            font-size: 1.04rem;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.16s ease;
+        }
+
+        .definition-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .definition-card:nth-child(4n+1) { background: #dbf5ff; }
+        .definition-card:nth-child(4n+2) { background: #fff9d9; }
+        .definition-card:nth-child(4n+3) { background: #ffeef7; }
+        .definition-card:nth-child(4n+4) { background: #f4eaff; }
+
+        .word-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .word-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .word-title {
+            font-size: 1.22rem;
+            font-weight: 800;
+            color: #2d4c2c;
+            margin-bottom: 2px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .word-type {
+            font-size: 0.97rem;
+            color: #555;
+            font-style: italic;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .word-definition {
+            line-height: 1.6;
+            color: #555;
+            font-size: 0.97rem;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #555;
+            font-style: italic;
+            padding: 40px 20px;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            background: linear-gradient(135deg, #2a3d2a 0%, #3e4f3e 100%);
+        }
+
+        body.dark .container {
+            background: #2c3639;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        body.dark .sidebar {
+            background-color: #3f4f44;
+        }
+        body.dark .sidebar .logo {
+            color: #e8f5e8;
+        }
+        body.dark .sidebar a {
+            color: #d4e6d4;
+        }
+        body.dark .sidebar a:hover,
+        body.dark .sidebar a.active {
+            background-color: #4a5d4f;
+            color: #ffffff;
+        }
+        body.dark .menu-btn {
+            background-color: #4a5d4f;
+        }
+        body.dark .menu-btn:hover {
+            background-color: #5a6b5a;
+        }
+            background: linear-gradient(135deg, #4a5d4f 0%, #3f4f44 100%);
+        }
+
+        body.dark .header h1 {
+            color: #e8f5e8;
+        }
+
+        body.dark .search-bar {
+            background: #4a5456;
+            border-color: #5a6456;
+            color: #e6eae6;
+        }
+
+        body.dark .search-bar:focus {
+            border-color: #6b7c6b;
+        }
+
+        body.dark .search-icon {
+            color: #b8c5b8;
+        }
+
+        body.dark .tabs {
+            background: #3a4042;
+            border-bottom-color: #4a5456;
+        }
+
+        body.dark .tab-button {
+            color: #b8c5b8;
+        }
+
+        body.dark .tab-button.active {
+            color: #e6eae6;
+            background: rgba(106, 124, 107, 0.2);
+        }
+
+        body.dark .tab-button.active::after {
+            background: #6b7c6b;
+        }
+
+        body.dark .letter-button {
+            background: #4a5d4f;
+            color: #e6eae6;
+        }
+
+        body.dark .letter-button:hover {
+            background: #5a6b5a;
+        }
+
+        body.dark .definition-card {
+            background: #3a4042;
+            border-color: #4a5456;
+            color: #e6eae6;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        body.dark .word-title {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        body.dark .word-type,
+        body.dark .word-definition {
+            color: #b8c5b8;
+        }
+
+        body.dark .no-results {
+            color: #b8c5b8;
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.15s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        body.dark .theme-toggle {
+            background: rgba(0,0,0,0.2);
+        }
+
+        body.dark .theme-toggle:hover {
+            background: rgba(0,0,0,0.3);
+        }
+
+        /* Scrollbar styling */
+        .content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        body.dark .content::-webkit-scrollbar-track {
+            background: #4a5456;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #73c673;
+            border-radius: 10px;
+        }
+
+        body.dark .content::-webkit-scrollbar-thumb {
+            background: #6b7c6b;
+        }
+
+        @media (max-width: 470px) {
+            .container {
+                max-width: 98vw;
+                border-radius: 0;
+                min-height: 100vh;
+                margin: 0;
+            }
+            
+            .header {
+                padding: 40px 3vw 20px;
+            }
+
+            .tab-content {
+                padding: 20px 3vw;
+            }
+
+            .alphabet-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .main-content {
+                padding: 22px 3vw 10px 3vw;
+            }
+        }
+// Toggle sidebar - exactly matching BuddySign functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const container = document.getElementById("mainContainer");
+            sidebar.classList.toggle("open");
+            container.classList.toggle("shifted");
+        }
+
+        // Sample dictionary data
+        const dictionaryData = [
+            {
+              word: "A",
+                type: "letter",
+                definition: "make both hands into a fist, stick the thumbs out, connect the tips of the  thumbs at a 60 degree angle such that your palms are facing away from you",
+                image: "data:image/webp;base64,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"},{
+                word: "Apple",
+                type: "noun",
+                definition: "a fruit",
+                image: "https://drive.google.com/drive/u/0/folders/11jrWjWw48wpxDKjnIh_R9BZpKl0fNOX3"
+            },
+            {
+                word: "B",
+                type: "letter",
+                definition: "raise both hands so that both palms are facing each other about 15cm apart.. Touch your index finger to the thumb like an ok sign. Bring your hands closer together so that the tips of your index fingers are touching",
+                image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=300&fit=crop"
+            },
+            {
+                word: "C",
+                type: "letter",
+                definition: "raise your right hand and make a fist so that yout knuckles are permenticular to your mouth. Open both the indec and pointer finger. Curve the fingers slighly to create c shape",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Dream",
+                type: "noun",
+                definition: "A series of thoughts, images, and sensations occurring in a person's mind during sleep. Also, a cherished aspiration or ambition.",
+                image: "https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Elephant",
+                type: "noun",
+                definition: "A very large mammal with thick gray skin, large ears, tusks, and a long trunk. Native to Africa and southern Asia.",
+                image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Freedom",
+                type: "noun",
+                definition: "The power or right to act, speak, or think as one wants without hindrance or restraint. The state of not being imprisoned or enslaved.",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Guitar",
+                type: "noun",
+                definition: "A stringed musical instrument with a fretted fingerboard, typically incurved sides, and six or twelve strings, played by plucking or strumming.",
+                image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Happiness",
+                type: "noun",
+                definition: "The feeling or state of being happy. A pleasurable or satisfying experience that brings joy and contentment.",
+                image: "https://images.unsplash.com/photo-1445810694374-0a94739e4a03?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Innovation",
+                type: "noun",
+                definition: "The action or process of innovating. A new method, idea, product, or way of doing something that creates value.",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=300&h=300&fit=crop"
+            },
+            {
+                word: "Journey",
+                type: "noun",
+                definition: "An act of traveling from one place to another. Also refers to a process of personal development or spiritual discovery.",
+                image: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjg3N3JiZHNvbDlrdWMwMWJ3MjBpMmNvODlnMWtuOHZtazc5eDk5MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ilyluIFwD2Et5X5hzF/giphy.gif"
+            }
+        ];
+
+        let currentFilter = '';
+        let currentTab = 'words';
+
+        // Initialize the app
+        function init() {
+            displayWords(dictionaryData);
+            setupSearch();
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            currentTab = tabName;
+            
+            if (tabName === 'words') {
+                displayWords(dictionaryData);
+            }
+        }
+
+        // Display words in the container
+        function displayWords(words) {
+            const container = document.getElementById('words-container');
+            
+            if (words.length === 0) {
+                container.innerHTML = '<div class="no-results">No words found matching your search.</div>';
+                return;
+            }
+            
+            container.innerHTML = words.map(word => `
+                <div class="definition-card">
+                    <div class="word-header">
+                        <img src="${word.image}" alt="${word.word}" class="word-image" onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=300&fit=crop'">
+                        <div>
+                            <div class="word-title">${word.word}</div>
+                            <div class="word-type">${word.type}</div>
+                        </div>
+                    </div>
+                    <div class="word-definition">${word.definition}</div>
+                </div>
+            `).join('');
+        }
+
+        // Filter by alphabet letter
+        function filterByLetter(letter) {
+            const filteredWords = dictionaryData.filter(word => 
+                word.word.toUpperCase().startsWith(letter)
+            );
+            
+            const container = document.getElementById('alphabet-container');
+            
+            if (filteredWords.length === 0) {
+                container.innerHTML = <div class="no-results">No words found starting with "${letter}".</div>;
+                return;
+            }
+            
+            container.innerHTML = filteredWords.map(word => `
+                <div class="definition-card">
+                    <div class="word-header">
+                        <img src="${word.image}" alt="${word.word}" class="word-image" onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=300&fit=crop'">
+                        <div>
+                            <div class="word-title">${word.word}</div>
+                            <div class="word-type">${word.type}</div>
+                        </div>
+                    </div>
+                    <div class="word-definition">${word.definition}</div>
+                </div>
+            `).join('');
+        }
+
+        // Setup search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    
+                    if (searchTerm === '') {
+                        displayWords(dictionaryData);
+                        return;
+                    }
+                    
+                    const filteredWords = dictionaryData.filter(word =>
+                        word.word.toLowerCase().includes(searchTerm) ||
+                        word.definition.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    displayWords(filteredWords);
+                }, 300);
+            });
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Add smooth scrolling behavior
+        document.querySelectorAll('.content').forEach(content => {
+            content.style.scrollBehavior = 'smooth';
+        });
+
