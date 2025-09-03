@@ -5,168 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BuddySign Kids Forum</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
+      align-items: flex-start;
       padding: 20px;
     }
 
     .container {
-      position: relative;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      padding: 20px 20px 20px 70px; /* leave space on left for menu toggle */
-      overflow-x: hidden;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      overflow: hidden;
+      position: relative;
+      transition: margin-left 0.3s ease;
     }
 
-    /* Menu toggle button on left side */
-    .menu-toggle {
+    /* Sidebar */
+    .sidebar {
       position: absolute;
-      top: 20px;
-      left: 15px;
-      width: 40px;
-      height: 40px;
-      background-color: #4caf50;
-      border: none;
-      border-radius: 10px;
+      top: 0;
+      left: -160px;
+      width: 160px;
+      height: 100%;
+      background-color: #73c673;
       color: white;
-      font-size: 24px;
+      padding-top: 60px;
+      transition: left 0.3s ease;
+      z-index: 3;
+      box-shadow: 2px 0 16px rgba(80,130,100,0.15);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+    .sidebar a:hover { background: #5aa85a; }
+
+    /* Menu button */
+    .menu-btn {
+      position: absolute;
+      top: 14px;
+      left: 160px;
+      transform: translateX(50%);
+      background-color: #73c673;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 20px;
+      border-radius: 8px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-      user-select: none;
+      z-index: 10;
+      font-weight: 700;
+      transition: left 0.3s ease, transform 0.3s ease;
+    }
+    .sidebar.open .menu-btn {
+      left: 14px;
+      transform: translateX(0);
     }
 
-    .header {
+    /* Main content */
+    .main-content {
+      padding: 70px 20px 20px;
+      transition: margin-left 0.3s ease;
       text-align: center;
-      padding-bottom: 20px;
     }
+    .container.shifted .main-content { margin-left: 160px; }
 
     .header h1 {
-      font-size: 28px;
+      font-size: 26px;
+      font-weight: 800;
       color: #333;
+      margin-bottom: 20px;
     }
 
-    /* Sidebar menu inside container */
-    .menu {
-      position: absolute;
-      top: 60px; /* below toggle button */
-      left: -180px; /* hidden to left */
-      width: 160px;
-      height: calc(100% - 60px);
-      background: white;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.15);
-      flex-direction: column;
-      padding-top: 10px;
-      transition: left 0.3s ease;
-      border-radius: 10px;
-      display: flex;
-      z-index: 15;
+    /* New post form */
+    .new-post {
+      margin-bottom: 20px;
+      text-align: left;
     }
-
-    .menu.active {
-      left: 0; /* slide in inside container */
-    }
-
-    .menu a {
-      text-decoration: none;
-      color: #333;
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .menu a:hover {
-      background-color: #f0f0f0;
-    }
-
     .new-post input,
     .new-post textarea {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
+      border: 2px solid #e3e3e3;
+      border-radius: 12px;
       font-size: 14px;
-      resize: vertical;
     }
-
     .new-post button {
       width: 100%;
-      background-color: #4caf50;
+      background-color: #73c673;
       color: white;
       border: none;
       padding: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 6px 12px rgba(115,198,115,0.2);
     }
+    .new-post button:hover { background-color: #5aa85a; }
 
+    /* Forum posts */
     .forum-post {
-      background-color: #fff8dc;
+      background-color: #ffeef7;
       padding: 15px;
-      border-radius: 15px;
-      border: 2px solid #333;
+      border-radius: 14px;
+      border: 1px solid #e3e3e3;
       margin-bottom: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      text-align: left;
     }
-
     .forum-post h3 {
       font-size: 18px;
       margin-bottom: 10px;
+      font-weight: 700;
+      color: #2d4c2c;
     }
-
     .forum-post p {
       font-size: 14px;
+      font-weight: 500;
+      color: #444;
     }
 
     .reactions {
-      font-size: 16px;
+      font-size: 15px;
       margin-top: 8px;
+      color: #2f7a3f;
+      font-weight: 700;
     }
-
     .reply {
       margin-top: 10px;
-      background-color: #e6ffe6;
+      background-color: #dbf5ff;
       padding: 10px;
       border-radius: 10px;
       font-size: 14px;
+      font-weight: 600;
+      color: #333;
     }
 
+    /* Footer */
     .footer {
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       font-size: 14px;
-      color: white;
+      font-weight: 600;
+      color: #2d4c2c;
       background: transparent;
-      position: sticky;
-      bottom: 0;
       margin-top: 20px;
-      user-select: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">☰</button>
-
-    <div class="menu" id="menu">
+  <div class="container" id="forumContainer">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <button class="menu-btn" id="menuBtn">☰</button>
       <a href="#">Dashboard</a>
       <a href="#">Lessons</a>
       <a href="#">Dictionary</a>
@@ -174,54 +181,59 @@
       <a href="#">Settings</a>
     </div>
 
-    <div class="header">
-      <h1> Forum</h1>
-    </div>
+    <!-- Forum content -->
+    <div class="main-content" id="mainContent">
+      <div class="header"><h1>Forum</h1></div>
 
-    <div class="new-post">
-      <input type="text" placeholder="📝 Title your post..." />
-      <textarea rows="3" placeholder="💬 How are you feeling or what do you want to ask?"></textarea>
-      <button>📤 Post</button>
-    </div>
+      <div class="new-post">
+        <input type="text" placeholder="📝 Title your post..." />
+        <textarea rows="3" placeholder="💬 How are you feeling or what do you want to ask?"></textarea>
+        <button>📤 Post</button>
+      </div>
 
-    <div class="forum-post">
-      <h3>😃 I'm feeling happy today!</h3>
-      <p>I finished my first ISL lesson and got 3 stars ⭐⭐⭐</p>
-      <div class="reactions">
-        ❤️ 3 &nbsp; 😄 2 &nbsp; 🙌 1
+      <div class="forum-post">
+        <h3>😃 I'm feeling happy today!</h3>
+        <p>I finished my first ISL lesson and got 3 stars ⭐⭐⭐</p>
+        <div class="reactions">❤️ 3 &nbsp; 😄 2 &nbsp; 🙌 1</div>
+        <div class="reply"><strong>👧 User 2:</strong> Yay! I finished mine too!</div>
       </div>
-      <div class="reply">
-        <strong>👧 User 2:</strong> Yay! I finished mine too!
-      </div>
-    </div>
 
-    <div class="forum-post">
-      <h3>❓ How do I sign "cat"?</h3>
-      <p>I want to show my pet to my friend but don’t know the ISL sign for cat. Help!</p>
-      <div class="reactions">
-        💡 4 &nbsp; 🐱 1 &nbsp; ❤️ 1
+      <div class="forum-post">
+        <h3>❓ How do I sign "cat"?</h3>
+        <p>I want to show my pet to my friend but don’t know the ISL sign for cat. Help!</p>
+        <div class="reactions">💡 4 &nbsp; 🐱 1 &nbsp; ❤️ 1</div>
+        <div class="reply"><strong>👦 User 1:</strong> It's in Lesson 2! Look under "Animals" 🐱</div>
       </div>
-      <div class="reply">
-        <strong>👦 User 1:</strong> It's in Lesson 2! Look under "Animals" 🐱
+
+      <div class="footer">
+        🧩 BuddySign &copy; 2025 | Safe Learning for Awesome Kids!
       </div>
     </div>
-  </div>
-
-  <div class="footer">
-    🧩 BuddySign &copy; 2025 | Safe Learning for Awesome Kids!
   </div>
 
   <script>
-    function toggleMenu() {
-      const menu = document.getElementById("menu");
-      menu.classList.toggle("active");
+    const sidebar = document.getElementById('sidebar');
+    const container = document.getElementById('forumContainer');
+    const menuBtn = document.getElementById('menuBtn');
+    const mainContent = document.getElementById('mainContent');
+
+    function toggleSidebar() {
+      const open = sidebar.classList.toggle('open');
+      container.classList.toggle('shifted', open);
     }
+
+    menuBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleSidebar();
+    });
+
+    mainContent.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        container.classList.remove('shifted');
+      }
+    });
   </script>
 
 </body>
 </html>
-
-
-
-
-
