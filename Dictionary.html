@@ -697,7 +697,7 @@
             const container = document.getElementById('alphabet-container');
             
             if (filteredWords.length === 0) {
-                container.innerHTML = <div class="no-results">No words found starting with "${letter}".</div>;
+                container.innerHTML = `<div class="no-results">No words found starting with "${letter}".</div>`;
                 return;
             }
             
