@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parent Gateway - BuddySign</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh; display: flex; justify-content: center; align-items: center;
+    }
+    .box {
+      background: white; padding: 30px; border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15); width: 320px; text-align: center;
+    }
+    input, button {
+      width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc;
+    }
+    button {
+      background: #73c673; color: white; font-weight: 700; border: none; cursor: pointer;
+    }
+    button:hover { background: #56bb70; }
+    .error { color: #b63b39; font-size: 0.9rem; margin-top: 10px; display: none; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Parent Gateway</h2>
+    <p id="statusMsg">Checking your session...</p>
+    <div id="pwBox" class="hidden">
+      <input type="password" id="gatewayPassword" placeholder="Enter Parent Password"/>
+      <button id="unlockBtn">Unlock</button>
+      <p id="errorMsg" class="error"></p>
+    </div>
+    <div id="fallbackLogin" class="hidden">
+      <p>No active session. Please login first.</p>
+      <button onclick="window.location.href='launch.html'">Go to Login</button>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="../backend/firebase-init.js"></script>
+
+  <script>
+    const statusMsg = document.getElementById("statusMsg");
+    const pwBox = document.getElementById("pwBox");
+    const fallbackLogin = document.getElementById("fallbackLogin");
+    const errorMsg = document.getElementById("errorMsg");
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Session exists
+        statusMsg.textContent = `Session found for ${user.email}`;
+        pwBox.classList.remove("hidden");
+      } else {
+        // No session → show login redirect
+        statusMsg.style.display = "none";
+        fallbackLogin.classList.remove("hidden");
+      }
+    });
+
+    unlockBtn.onclick = async () => {
+      const user = firebase.auth().currentUser;
+      const password = document.getElementById("gatewayPassword").value;
+
+      if (!user) {
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "No active session. Please log in first.";
+        return;
+      }
+
+      try {
+        const cred = firebase.auth.EmailAuthProvider.credential(user.email, password);
+        await user.reauthenticateWithCredential(cred);
+
+        // Redirect to dashboard on success
+        window.location.href = "parentdashboard.html";
+      } catch (err) {
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "Incorrect password. Try again.";
+      }
+    };
+  </script>
+</body>
+</html>

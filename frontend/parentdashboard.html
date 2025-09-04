@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuddySign - Parent Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .container {
+      max-width: 420px;
+      width: 100%;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      overflow: hidden;
+      position: relative;
+      min-height: 500px;
+      z-index: 1;
+    }
+    .main-content {
+      width: 90%;
+      margin: 0 auto;
+      padding: 30px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 10px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .child-count {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 20px;
+    }
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+    .action-card {
+      background: #e6ffe6;
+      border: 2px solid #73c673;
+      border-radius: 16px;
+      width: 220px;
+      height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.08rem;
+      color: #148c2a;
+      box-shadow: 0 1px 7px rgba(80,130,100,0.09);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.13s, color 0.13s;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      padding: 0 12px;
+    }
+    .action-card .icon { font-size: 1.55rem; margin-bottom: 5px; }
+    .action-card.addchild .icon { color: #aa6cff; font-size: 1.65rem; }
+    .action-card.logout .icon { color: #e69b4b; font-size: 1.65rem; }
+    .action-card:hover {
+      background: #dbf5ff;
+      color: #44a1dc;
+      border-color: #9be7f8;
+      box-shadow: 0 8px 26px #73c67352;
+    }
+
+    /* Child list styles */
+    .child-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .child-card {
+      background: #f9f9ff;
+      border: 1.5px solid #bbb;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .child-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .child-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .remove-btn {
+      background: #ff4d4d;
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.9rem;
+      padding: 6px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .remove-btn:hover {
+      background: #cc0000;
+    }
+
+    @media (max-width: 540px) {
+      .container { max-width: 99vw; border-radius: 0; min-height: 100vh; }
+      .main-content { width: 100%; padding: 24px 5vw; }
+      .action-card { width:90vw; max-width:260px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="mainContainer">
+    <div class="main-content" id="dashboardContent">
+      <h2>Your Children</h2>
+      <p class="child-count" id="childCount">Total Children: 0</p>
+
+      <div class="action-stack">
+        <div class="action-card addchild" id="addChildBtn">
+          <span class="icon">😊</span>
+          <span class="label">Add New Child</span>
+        </div>
+        <div class="action-card logout" id="logoutBtn">
+          <span class="icon">🚪</span>
+          <span class="label">Logout</span>
+        </div>
+      </div>
+
+      <div class="child-list" id="childList">
+        <!-- Children will appear here dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const childList = document.getElementById("childList");
+  const childCount = document.getElementById("childCount");
+
+  let children = [];
+
+  // Add new child
+  document.getElementById("addChildBtn").onclick = function() {
+    const childName = "Child " + (children.length + 1);
+    children.push({ id: Date.now(), name: childName }); // store as object
+    renderChildren();
+  };
+
+  // Logout
+  document.getElementById("logoutBtn").onclick = function() {
+    alert("Logging out...");
+    window.location.href = "index.html"; // go back to launch page
+  };
+
+  // Render children
+  function renderChildren() {
+    childList.innerHTML = "";
+    children.forEach((child, index) => {
+      const card = document.createElement("div");
+      card.className = "child-card";
+
+      const nameEl = document.createElement("span");
+      nameEl.className = "child-name";
+      nameEl.innerText = child.name;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-btn";
+      removeBtn.innerText = "Remove";
+      removeBtn.onclick = (e) => {
+        e.stopPropagation(); // prevent triggering card click
+        children.splice(index, 1);
+        renderChildren();
+      };
+
+      // 👉 navigate to child settings when clicked
+      card.onclick = () => {
+        localStorage.setItem("selectedChild", JSON.stringify(child));
+        window.location.href = "child-settings.html";
+      };
+
+      card.appendChild(nameEl);
+      card.appendChild(removeBtn);
+      childList.appendChild(card);
+    });
+
+    childCount.innerText = "Total Children: " + children.length;
+  }
+</script>
+
+</body>
+</html>
