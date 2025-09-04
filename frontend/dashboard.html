@@ -235,11 +235,12 @@
     <div class="sidebar" id="sidebar">
       <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
       <div class="logo">BuddySign</div>
-      <a href="#" data-key="home" class="nav-link active">Dashboard</a>
-      <a href="#" data-key="lessons" class="nav-link">Lessons</a>
+      <a href="http://127.0.0.1:5500/buddysign.html" class="nav-link">Home</a> 
+      <a href="http://127.0.0.1:5500/dashboard.html" data-key="home" class="active">Dashboard</a>
+      <a href="http://127.0.0.1:5500/Lessons.html" data-key="lessons" class="nav-link">Lessons</a>
       <a href="#" data-key="dictionary" class="nav-link">Dictionary</a>
-      <a href="#" data-key="forum" class="nav-link">Forum</a>
-      <a href="#" data-key="settings" class="nav-link">Settings</a>
+      <a href="http://127.0.0.1:5500/forum.html" data-key="forum" class="nav-link">Forum</a>
+      <a href="http://127.0.0.1:5500/settings.html" data-key="settings" class="nav-link">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -320,22 +321,26 @@
       }
     });
 
-    document.querySelectorAll('.sidebar .nav-link').forEach(a => {
-      a.addEventListener('click', evt => {
-        evt.preventDefault();
-        sidebar.classList.remove('open');
-        container.classList.remove('shifted');
-        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-        a.classList.add('active');
-        document.getElementById('pageTitle').textContent = {
-          home: 'Dashboard',
-          lessons: 'Lessons',
-          dictionary: 'Dictionary',
-          forum: 'Forum',
-          settings: 'Settings'
-        }[a.dataset.key] || 'Dashboard';
-      });
-    });
+   /* document.querySelectorAll('.sidebar .nav-link').forEach(a => {
+  a.addEventListener('click', evt => {
+    // Only prevent default for links with data-key (internal navigation)
+    if (a.hasAttribute('data-key')) {
+      evt.preventDefault();
+      sidebar.classList.remove('open');
+      container.classList.remove('shifted');
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      a.classList.add('active');
+      document.getElementById('pageTitle').textContent = {
+        home: 'Dashboard',
+        lessons: 'Lessons',
+        dictionary: 'Dictionary',
+        forum: 'Forum',
+        settings: 'Settings'
+      }[a.dataset.key] || 'Dashboard';
+    }
+    // Otherwise, let the browser follow the link (e.g., Home)
+  });
+});*/
 
     function makePointRow(point, warn=false, idx=0) {
       const wrapper = document.createElement('div');
