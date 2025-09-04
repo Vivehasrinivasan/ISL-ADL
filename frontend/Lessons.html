@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuddySign - Lessons Map Curvy Path</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap');
+    :root {
+      --card-radius: 26px;
+      --menu-green: #73c673;
+      --header-green: #349c34;
+      --gold: #FFD700;
+      --gold-bg1: #FFF8DC;
+      --gold-bg2: #FFE066;
+      --gold-shadow: #ffe06699;
+    }
+    body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #eafff1 0%, #fbefff 100%);
+      font-family: 'Baloo 2', 'Poppins', Arial, sans-serif; display: flex; align-items: flex-start; justify-content: center; padding: 0;}
+    .container { width: 410px; max-width: 97vw; min-height: 100vh; background: #fff; border-radius: var(--card-radius);
+      box-shadow: 0 10px 35px #cab0de32; position: relative; overflow: hidden; display: flex;}
+    .sidebar { position: absolute; top: 0; left: -160px; width: 160px; height: 100%; background: var(--menu-green); color: white;
+      padding-top: 60px; transition: left 0.3s cubic-bezier(.44,.04,.54,1.01); z-index: 3; box-shadow: 2px 0 16px 0 rgba(80,130,100,0.07);}
+    .sidebar.open {left: 0;}
+    .sidebar .logo { font-size: 1.22rem; font-weight: 900; margin-bottom: 23px; margin-left: 16px;}
+    .sidebar a { display: block; padding: 12px 16px; font-size: 16px; color: white; text-decoration: none;}
+    .sidebar a:hover,.sidebar a.active {background-color: #5aa85a;}
+    .main-content { padding: 26px 10px 18px 10px; flex-grow: 1; width: 100%; min-height: 100vh; margin-left: 0;
+      position: relative; transition: margin-left 0.3s; display: flex; flex-direction: column; align-items: center;}
+    .container.shifted .main-content {margin-left: 160px;}
+    .header-bar { display: flex; align-items: center; margin-bottom: 16px; width: 100%;}
+    .menu-btn { background-color: var(--menu-green); color: white; border: none; width: 39px; height: 39px; font-size: 24px;
+      border-radius: 10px; cursor: pointer; margin-right: 13px; flex-shrink: 0; box-shadow: 0 2px 10px #bfe0c8; z-index: 10;
+      display: flex; align-items: center; justify-content: center;}
+    h1 { font-family: 'Baloo 2', 'Poppins', sans-serif; font-size: 2.1rem; font-weight: 900; color: var(--header-green); margin: 0;
+      flex: 1; text-align: left; z-index: 1; letter-spacing: 0.5px;}
+    .path-wrap { width: 100%; max-width: 360px; min-height: 1450px; position: relative; padding-bottom: 65px;}
+    .unit-snake-path { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
+    .circles-grid { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;}
+    .lesson-dot { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center;
+      pointer-events: auto; min-width: 105px; z-index: 20; cursor: pointer;}
+    .circle { width: 62px; height: 62px; border-radius: 50%;
+      background: linear-gradient(135deg, #d7ffe7 0%, #b8f7cc 100%);
+      border: 3.2px solid #fff; box-shadow: 0 4px 24px #aee6b57e;
+      display: flex; align-items: center; justify-content: center; font-size: 1.8em; color: #318949; font-weight: bold; position: relative;
+      margin-bottom: 10px; transition: filter 0.17s, background 0.16s, box-shadow 0.12s; font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+    }
+    .circle.completed {
+      background: linear-gradient(135deg, var(--gold-bg1) 0%, var(--gold-bg2) 100%);
+      border: 3.2px solid var(--gold);
+      box-shadow: 0 0 22px var(--gold-shadow);
+      color: #ad8700;
+    }
+    .circle.current {
+      background: linear-gradient(135deg, #bbf8b9 19%, #e2ffd8 98%);
+      color: #233d6e;
+      border: 3.2px solid #467be8;
+      box-shadow: 0 0 18px #d8ffd1a9;
+    }
+    .circle.locked {
+      background: linear-gradient(135deg, #d3e3d6, #eefbef 100%);
+      color: #9ca7ba;
+      opacity: 0.33;
+      filter: grayscale(1);
+      border: 3.2px dashed #c8d5e2;
+      box-shadow: none;
+    }
+    .circle.completed:after {
+      content: '✔';
+      color: var(--gold);
+      position: absolute;
+      right: 10px;
+      top: 9px;
+      font-size: 1.12em;
+      font-weight: bold;
+    }
+    .lesson-label {
+      font-size: 0.98em;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 900;
+      color: #ad8700;
+      margin: 6px 0 0 0;
+      text-align: center;
+      line-height: 1.13;
+      width: 92px;
+      user-select: text;
+      word-break: break-word;
+      letter-spacing: 0.01em;
+    }
+    .lesson-dot:active .circle:not(.locked) {
+      filter: brightness(1.13);
+    }
+    .progress-section {background: #eaeaff; border-radius: 14px; padding: 14px 10px 19px 17px; margin-top: 32px;
+      box-shadow: 0 2px 8px #b6c3ff31; font-family: inherit; font-size: 1.08em; color: #4c5fa8; font-weight: 800; width: 97%;}
+    .progress-section .progress-text { font-weight: 900; font-size: 1.10em; color: #5c6fac; margin-bottom: 7px;}
+    .progress-bar { width: 100%; height: 19px; background: #e0eaff; border-radius: 12px; margin: 9px auto 0 auto; overflow: hidden;
+      display: flex; align-items: center; box-shadow: 0 1px 7px #bbc7f9a9;}
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #c7e3fd 10%, #3df2de 100%);
+      border-radius: 12px; transition: width 0.5s;}
+    .action-btn { display: block; margin: 28px auto 30px auto; padding: 13px 22px; font-weight: 700; font-size: 1.10em; color: #fff;
+      background: linear-gradient(90deg, #589cdf 0%, #82e2ef 100%); border: 0; border-radius: 13px; box-shadow: 0 2px 12px #a8d5fa95;
+      cursor: pointer; font-family: inherit; z-index: 80; position: static;}
+    .action-btn:active { background: #c0deff;}
+    @media (max-width: 430px) {
+      .container {width: 100%; border-radius: 0;}
+      .main-content {padding: 12px 2vw 20px 2vw;}
+      .path-wrap {max-width: 99vw;}
+      .lesson-dot {min-width: 72px;}
+      .circle {width: 45px; height: 45px; font-size: 0.80em;}
+      .lesson-label {width: 66px; font-size: 0.82em;}
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+  <div class="sidebar" id="sidebar">
+    <div class="logo">BuddySign</div>
+    <a href="http://127.0.0.1:5500/buddysign.html" class="nav-link">Home</a> 
+    <a href="http://127.0.0.1:5500/dashboard.html"class="nav-link">Dashboard</a>
+    <a href="#" class="active">Lessons</a>
+    <a href="#">Dictionary</a>
+    <a href="http://127.0.0.1:5500/forum.html" class="nav-link">Forum</a>
+    <a href="http://127.0.0.1:5500/settings.html" class="nav-link">Settings</a>
+  </div>
+  <div class="main-content">
+    <div class="header-bar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <h1>Lessons</h1>
+    </div>
+    <div class="path-wrap" style="height:1450px;">
+      <svg class="unit-snake-path" viewBox="0 0 360 1450" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M60,110 Q280,180 90,320 Q250,430 320,480 Q340,540 112,630 Q100,760 250,790 Q285,960 80,1070 Q200,1110 340,1175 Q220,1230 120,1280 Q180,1360 240,1410"
+          fill="none" stroke="#66be74" stroke-width="25" stroke-linecap="round" opacity="0.23"/>
+      </svg>
+      <div class="circles-grid" id="circlesGrid"></div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-text" id="progressText">0 of 15 steps completed</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+      </div>
+    </div>
+    <button onclick="advanceLesson()" class="action-btn">Finish Next Step</button>
+  </div>
+</div>
+<script>
+  const LESSON_NODES = [
+    {icon:"🙋‍♂", label:"Greetings"},
+    {icon:"👪", label:"Family"},
+    {icon:"🏫", label:"School"},
+    {icon:"🏠", label:"Daily Activities"},
+    {icon:"🔢", label:"Numbers"},
+    {icon:"🔡", label:"Alphabets"},
+    {icon:"❓", label:"Questioning"},
+    {icon:"🧑", label:"People"},
+    {icon:"⏰", label:"Time"},
+    {icon:"😊", label:"Feelings"},
+    {icon:"🟦", label:"Colors"},
+    {icon:"🦁", label:"Animals"},
+    {icon:"🦵", label:"Body Parts"},
+    {icon:"🍎", label:"Food"},
+    {icon:"👕", label:"Clothes"}
+  ];
+  const PATH_POINTS = [
+    {x:60,  y:110},     // Greetings
+    {x:200, y:180},     // Family
+    {x:90,  y:320},     // School
+    {x:200, y:400},     // Daily Activities
+    {x:320, y:480},     // Numbers
+    {x:150, y:630},     // Alphabets
+    {x:100, y:760},     // Questioning
+    {x:250, y:790},     // People
+    {x:255, y:990},     // Time
+    {x:80,  y:1070},    // Feelings
+    {x:200, y:1140},    // Colors
+    {x:340, y:1220},    // Animals
+    {x:230, y:1270},    // Body Parts
+    {x:120, y:1340},    // Food
+    {x:180, y:1460}     // Clothes
+  ];
+  let currentStage = 0;
+  function moveCircles() {
+    const cg = document.getElementById("circlesGrid");
+    cg.innerHTML = "";
+    for (let i = 0; i < LESSON_NODES.length; i++) {
+      let state = "locked";
+      if (i < currentStage) state = "completed";
+      else if (i === currentStage) state = "current";
+      LESSON_NODES[i].state = state;
+      let node = LESSON_NODES[i];
+      let dot = document.createElement("div");
+      dot.className = "lesson-dot";
+      dot.style.left = PATH_POINTS[i].x + "px";
+      dot.style.top = PATH_POINTS[i].y + "px";
+      let klass = "circle";
+      if (node.state === "completed") klass += " completed";
+      else if (node.state === "current") klass += " current";
+      else if (node.state === "locked") klass += " locked";
+      dot.innerHTML = '<div class="' + klass + '">' + node.icon +
+        (node.state === "locked" ? "<span style=\'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:1.2em;opacity:.54;\'>🔒</span>" : "") +
+        '</div><div class="lesson-label">' + node.label + '</div>';
+      dot.onclick = function() {
+        if (node.state !== "locked") {
+          alert("Go to lesson unit: " + node.label);
+        }
+      };
+      cg.appendChild(dot);
+    }
+    document.getElementById("progressText").textContent = currentStage + " of " + LESSON_NODES.length + " steps completed";
+    document.getElementById("progressFill").style.width = ((currentStage / LESSON_NODES.length) * 100).toFixed(1) + "%";
+  }
+  function advanceLesson() {
+    if (currentStage < LESSON_NODES.length) {
+      currentStage++;
+      moveCircles();
+    }
+  }
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("open");
+    document.getElementById("mainContainer").classList.toggle("shifted");
+  }
+  moveCircles();
+</script>
+</body>
+</html>
