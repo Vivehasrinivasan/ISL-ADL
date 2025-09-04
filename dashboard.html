@@ -236,7 +236,7 @@
       <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
       <div class="logo">BuddySign</div>
       <a href="http://127.0.0.1:5500/buddysign.html" class="nav-link">Home</a> 
-      <a href="#" data-key="home" class="active">Dashboard</a>
+      <a href="http://127.0.0.1:5500/dashboard.html" data-key="home" class="active">Dashboard</a>
       <a href="http://127.0.0.1:5500/Lessons.html" data-key="lessons" class="nav-link">Lessons</a>
       <a href="#" data-key="dictionary" class="nav-link">Dictionary</a>
       <a href="http://127.0.0.1:5500/forum.html" data-key="forum" class="nav-link">Forum</a>
@@ -321,7 +321,7 @@
       }
     });
 
-    document.querySelectorAll('.sidebar .nav-link').forEach(a => {
+   /* document.querySelectorAll('.sidebar .nav-link').forEach(a => {
   a.addEventListener('click', evt => {
     // Only prevent default for links with data-key (internal navigation)
     if (a.hasAttribute('data-key')) {
@@ -340,7 +340,7 @@
     }
     // Otherwise, let the browser follow the link (e.g., Home)
   });
-});
+});*/
 
     function makePointRow(point, warn=false, idx=0) {
       const wrapper = document.createElement('div');
