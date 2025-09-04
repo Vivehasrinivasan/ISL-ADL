@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuddySign - Parent Settings</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh;
+      min-width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 400px;
+      margin: 40px auto 20px auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      overflow: hidden;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      min-height: 650px;
+      position: relative;
+    }
+    /* Sidebar styles */
+    .sidebar {
+      position: absolute;
+      top: 0; left: -160px;
+      width: 160px;
+      height: 100%;
+      background-color: #73c673;
+      color: white;
+      padding-top: 60px;
+      transition: left 0.3s cubic-bezier(.44,.04,.54,1.01);
+      z-index: 2;
+      box-shadow: 2px 0 16px 0 rgba(80,130,100,0.07);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar .logo {
+      font-size: 1.22rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 23px;
+      letter-spacing: 1px;
+      margin-left: 16px;
+    }
+    .sidebar a {
+      display: block;
+      width: 100%;
+      color: white;
+      text-decoration: none;
+      padding: 12px 16px;
+      font-size: 16px;
+      transition: background 0.3s ease;
+      margin: 0;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #5aa85a;
+      color: #fff;
+    }
+    /* Main content */
+    .main-content {
+      padding: 36px 12px 22px 25px;
+      flex-grow: 1;
+      min-height: 650px;
+      width: 100%;
+      transition: margin-left 0.3s;
+      display: block;
+    }
+    .container.shifted .main-content { margin-left: 160px; }
+    .menu-btn {
+      position: absolute;
+      top: 15px; left: 15px; z-index: 3;
+      background-color: #73c673;
+      color: white; border: none;
+      padding: 8px 12px; font-size: 20px;
+      border-radius: 8px; cursor: pointer;
+    }
+    h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .setting-card {
+      border-radius: 12px;
+      border: 1px solid #e3e3e3;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      background: #fff8dc;
+      padding: 16px 15px;
+      font-size: 1.04rem;
+      font-family: inherit;
+    }
+    .card-blue    { background: #dbf5ff; }
+    .card-yellow  { background: #fff9d9; }
+    .card-pink    { background: #ffeef7; }
+    .card-purple  { background: #f4eaff; }
+    .setting-title {
+      font-weight: 800;
+      font-size: 1.11rem;
+      margin-bottom: 2px;
+      color: #2d4c2c;
+    }
+    .setting-desc {
+      font-size: .97rem;
+      margin-bottom: 12px;
+      color: #555;
+      font-weight: 600;
+    }
+    .switch {
+      float: right;
+      position: relative;
+      display: inline-block;
+      width: 44px; height: 24px;
+      margin-top: 8px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ddd;
+      border-radius: 24px;
+      transition: background 0.18s;
+    }
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 17px; width: 17px;
+      left: 3px; bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.18s;
+      box-shadow: 0 2px 6px #bbcbb0;
+    }
+    input:checked + .slider { background: #73c673; }
+    input:checked + .slider:before { transform: translateX(19px); }
+    .action-btn {
+      padding: 7px 16px;
+      font-weight: 700;
+      font-size: .97rem;
+      color: #348c2a;
+      background: #e6ffe6;
+      border: 1.1px solid #73c673;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 7px;
+    }
+    .action-btn:hover {
+      background: #dbf5ff;
+      border-color: #9be7f8;
+      color: #44a1dc;
+    }
+    .card-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    /* Screen Time Control */
+    .screen-time-select {
+      padding: 7px 16px;
+      font-weight: 700;
+      font-size: .98rem;
+      color: #348c2a;
+      background: #e6ffe6;
+      border: 1.1px solid #73c673;
+      border-radius: 7px;
+      margin-bottom: 10px;
+      max-width: 170px;
+      cursor: pointer;
+    }
+    .screen-time-select:hover {
+      background: #dbf5ff;
+      border-color: #9be7f8;
+      color: #44a1dc;
+    }
+    .screen-time-display {
+      font-weight: 700;
+      font-size: .96rem;
+      color: #377154;
+      margin-top: 5px;
+    }
+    @media (max-width:470px) {
+      .container    { max-width: 98vw; border-radius: 0; min-height: 100vh; }
+      .main-content { padding: 22px 3vw 10px 3vw; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="mainContainer">
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <div class="logo">BuddySign</div>
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Lessons</a>
+      <a href="#">Dictionary</a>
+      <a href="#">Forum</a>
+      <a href="#">Settings</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="settings-container" id="settingsPanel">
+        <h2>Settings</h2>
+        <section class="card-list">
+          <article class="setting-card card-blue">
+            <div class="setting-title">Forum Access</div>
+            <div class="setting-desc">Allow your child to join and post in the community forum.</div>
+            <label class="switch">
+              <input type="checkbox" id="forumAccessToggle" />
+              <span class="slider"></span>
+            </label>
+          </article>
+          <article class="setting-card card-yellow">
+            <div class="setting-title">Help Desk</div>
+            <div class="setting-desc">Contact support or get assistance any time.</div>
+            <button class="action-btn" onclick="openHelp()">Get Help</button>
+          </article>
+          <article class="setting-card card-pink">
+            <div class="setting-title">Theme Mode</div>
+            <div class="setting-desc">Switch between bright and dark mode.</div>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle" />
+              <span class="slider"></span>
+            </label>
+          </article>
+          <article class="setting-card card-purple">
+            <div class="setting-title">Profile & Activity</div>
+            <div class="setting-desc">Edit profile, view activity, manage child profiles.</div>
+            <div class="card-btns">
+              <button class="action-btn" onclick="editProfile()">Edit</button>
+              <button class="action-btn" onclick="viewActivity()">Activity</button>
+              <button class="action-btn" onclick="manageProfiles()">Profiles</button>
+            </div>
+          </article>
+          <article class="setting-card card-purple">
+            <div class="setting-title">Screen Time Control</div>
+            <div class="setting-desc">Set daily screen time limit for your child</div>
+            <select id="screenTimeSelect" class="screen-time-select">
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4 hours</option>
+              <option value="unlimited">No limit</option>
+            </select>
+            <div id="screenTimeDisplay" class="screen-time-display">Current limit: 30 minutes</div>
+          </article>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const container = document.getElementById("mainContainer");
+      sidebar.classList.toggle("open");
+      container.classList.toggle("shifted");
+    }
+    document.getElementById('themeToggle').addEventListener('change', function() {
+      document.body.classList.toggle('dark', this.checked);
+    });
+    function openHelp() { alert('Help Desk is open.'); }
+    function editProfile() { alert('Edit profile clicked.'); }
+    function viewActivity() { alert('View activity clicked.'); }
+    function manageProfiles() { alert('Manage profiles clicked.'); }
+    document.getElementById('forumAccessToggle').addEventListener('change', function() {
+      alert('Forum access is now: ' + (this.checked ? "Allowed" : "Blocked"));
+    });
+    document.getElementById('screenTimeSelect').addEventListener('change', function() {
+      const selectedValue = this.value;
+      const display = document.getElementById('screenTimeDisplay');
+      let displayText = "Current limit: ";
+      if (selectedValue === "unlimited") displayText += "No limit";
+      else {
+        const minutes = parseInt(selectedValue);
+        if (minutes < 60) displayText += minutes + " minutes";
+        else if (minutes === 60) displayText += "1 hour";
+        else displayText += (minutes / 60) + " hours";
+      }
+      display.textContent = displayText;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BuddySign - Launch</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+    }
+    .container {
+      max-width: 400px; width: 100%;
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      padding: 40px 36px 48px;
+      min-height: 650px;
+      display: flex; flex-direction: column; justify-content: center;
+      text-align: center;
+    }
+    h1 { font-size: 28px; color: #333; margin-bottom: 28px; font-weight: 800; }
+    input {
+      width: 100%; padding: 14px 16px; margin: 14px 0 24px;
+      border-radius: 8px; border: 1px solid #ccc;
+      font-size: 16px; font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+    input:focus { border-color: #73c673; box-shadow: 0 0 6px rgba(115,198,115,0.5); }
+    button {
+      width: 100%; padding: 14px 0; margin-top: 10px;
+      border: none; border-radius: 8px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer;
+      background-color: #73c673; color: white;
+      transition: background-color 0.3s ease;
+    }
+    button:hover { background-color: #5aa85a; }
+    .toggle-link { margin-top: 20px; font-size: 14px; color: #555; cursor: pointer; }
+    .message { margin-top: 14px; font-size: 14px; color: red; min-height: 20px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BuddySign</h1>
+
+    <!-- Login Form -->
+    <div id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Parent Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button onclick="parentLogin()">Login</button>
+      <p class="toggle-link" onclick="showSignup()">New here? Create an account</p>
+    </div>
+
+    <!-- Signup Form -->
+    <div id="signupForm" class="hidden">
+      <input type="email" id="signupEmail" placeholder="Parent Email" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button onclick="parentSignup()">Sign Up</button>
+      <p class="toggle-link" onclick="showLogin()">Already have an account? Login</p>
+    </div>
+
+    <p id="message" class="message"></p>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+  <script src="../backend/firebase-init.js"></script>
+
+  <script>
+    function showSignup() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("signupForm").classList.remove("hidden");
+      document.getElementById("message").innerText = "";
+    }
+    function showLogin() {
+      document.getElementById("signupForm").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+      document.getElementById("message").innerText = "";
+    }
+
+    // ✅ Parent Signup
+    async function parentSignup() {
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const parentId = cred.user.uid;
+
+        await db.collection("parents").doc(parentId).set({
+          email, children: [], activeChild: null, lastUsedChild: null, createdAt: new Date()
+        });
+
+        const childRef = await db.collection("children").add({
+          parentId, displayName: "Child 1", avatar: "", createdAt: new Date(),
+          progress: {}, forumSettings: { canAccessForum: false, screenTimeLimit: 60 }
+        });
+
+        await db.collection("parents").doc(parentId).set({
+          children: [childRef.id], activeChild: childRef.id, lastUsedChild: childRef.id
+        }, { merge: true });
+
+        localStorage.setItem("lastUsedChildId", childRef.id);
+        localStorage.setItem("parentEmail", email);
+        window.location.href = "buddysign.html";
+      } catch (err) {
+        document.getElementById("message").innerText = err.message;
+      }
+    }
+
+    // ✅ Parent Login
+    async function parentLogin() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      try {
+        const cred = await auth.signInWithEmailAndPassword(email, password);
+        const parentRef = db.collection("parents").doc(cred.user.uid);
+        const parentDoc = await parentRef.get();
+
+        if (parentDoc.exists) {
+          const data = parentDoc.data();
+          if (data?.lastUsedChild) {
+            localStorage.setItem("lastUsedChildId", data.lastUsedChild);
+            window.location.href = "buddysign.html";
+          } else {
+            const childRef = await db.collection("children").add({
+              parentId: cred.user.uid, displayName: "Child 1", avatar: "", createdAt: new Date(),
+              progress: {}, forumSettings: { canAccessForum: false, screenTimeLimit: 60 }
+            });
+            await parentRef.set({
+              children: [childRef.id], activeChild: childRef.id, lastUsedChild: childRef.id
+            }, { merge: true });
+            localStorage.setItem("lastUsedChildId", childRef.id);
+            window.location.href = "buddysign.html";
+          }
+        } else {
+          await parentRef.set({
+            email, children: [], activeChild: null, lastUsedChild: null, createdAt: new Date()
+          });
+          document.getElementById("message").innerText = "Parent record missing. Try logging in again.";
+        }
+      } catch (err) {
+        document.getElementById("message").innerText = err.message;
+      }
+    }
+  </script>
+</body>
+</html>
